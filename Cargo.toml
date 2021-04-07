@@ -1,0 +1,12 @@
+[package]
+name = "async-oncecell"
+version = "0.1.0"
+authors = ["Yoeri Otten <yoeri@otten.dev>"]
+edition = "2018"
+
+[dependencies]
+futures = "0.3"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt", "macros"] }
+tokio-test = "0.4"
