@@ -1,8 +1,14 @@
 [package]
 name = "async-oncecell"
+description = "Asynchronous versions of OnceCell and Lazy"
+repository = "https://github.com/Yoeori/async-oncecell"
 version = "0.1.0"
 authors = ["Yoeri Otten <yoeri@otten.dev>"]
 edition = "2018"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+keywords = ["once", "lazy", "static"]
+exclude = [".github/*"]
 
 [dependencies]
 futures = "0.3"
