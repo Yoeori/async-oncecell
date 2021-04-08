@@ -14,10 +14,11 @@ use std::{
     cell::UnsafeCell,
     convert::Infallible,
     fmt,
+    future::Future,
     sync::atomic::{AtomicBool, Ordering},
 };
 
-use futures::{lock::Mutex, Future};
+use futures::lock::Mutex;
 
 /// Cell which can be lazy instantiated with an asynchronous block and is safely share-able between threads.
 pub struct OnceCell<T> {
@@ -188,7 +189,7 @@ impl<T, F: Future<Output = T>> Lazy<T, F> {
     }
 }
 
-impl<T: fmt::Debug, F: Future<Output = T>> fmt::Debug for Lazy<T, F> {
+impl<T: fmt::Debug, F> fmt::Debug for Lazy<T, F> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_tuple("Lazy").field(&self.cell.get()).finish()
     }
