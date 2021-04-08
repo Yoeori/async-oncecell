@@ -1,13 +1,12 @@
 # async-oncecell
 
 [![Crates.io][crates-badge]][crates-url]
-[![MIT licensed][mit-badge]][mit-url]
+![MIT or Apache 2.0 licensed][license-badge]
 [![Continuous integration][actions-badge]][actions-url]
 
 [crates-badge]: https://img.shields.io/crates/v/async-oncecell
 [crates-url]: https://crates.io/crates/async-oncecell
-[mit-badge]: https://img.shields.io/crates/l/async-oncecell
-[mit-url]: https://github.com/Yoeori/async-oncecell/blob/master/LICENSE
+[license-badge]: https://img.shields.io/crates/l/async-oncecell
 [actions-badge]: https://github.com/Yoeori/async-oncecell/actions/workflows/main.yml/badge.svg
 [actions-url]: https://github.com/Yoeori/async-oncecell/actions/workflows/main.yml
 
