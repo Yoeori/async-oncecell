@@ -10,7 +10,14 @@
 #![warn(missing_docs)]
 #![crate_name = "async_oncecell"]
 
-use std::{cell::UnsafeCell, convert::Infallible, fmt, future::Future, pin::Pin, sync::atomic::{AtomicBool, Ordering}};
+use std::{
+    cell::UnsafeCell,
+    convert::Infallible,
+    fmt,
+    future::Future,
+    pin::Pin,
+    sync::atomic::{AtomicBool, Ordering},
+};
 
 use futures::lock::Mutex;
 
@@ -147,7 +154,7 @@ impl<T: PartialEq> PartialEq for OnceCell<T> {
 impl<T: Eq> Eq for OnceCell<T> {}
 
 /// Lazy cell which is only instantiated upon first retreival of contained value
-pub struct Lazy<T, F = Pin<Box<dyn Future<Output=T> + Send>>> {
+pub struct Lazy<T, F = Pin<Box<dyn Future<Output = T> + Send>>> {
     cell: OnceCell<T>,
     f: Mutex<Option<F>>,
 }
@@ -242,13 +249,11 @@ mod test {
     #[tokio::test]
     async fn test_lazy_struct() {
         struct Test {
-            lazy: Lazy<i32>
+            lazy: Lazy<i32>,
         }
 
         let data = Test {
-            lazy: Lazy::new(async {
-                0
-            })
+            lazy: Lazy::new(async { 0 }),
         };
 
         assert_eq!(data.lazy.get().await, &0);
