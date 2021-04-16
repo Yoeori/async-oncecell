@@ -10,13 +10,7 @@
 #![warn(missing_docs)]
 #![crate_name = "async_oncecell"]
 
-use std::{
-    cell::UnsafeCell,
-    convert::Infallible,
-    fmt,
-    future::Future,
-    sync::atomic::{AtomicBool, Ordering},
-};
+use std::{cell::UnsafeCell, convert::Infallible, fmt, future::Future, pin::Pin, sync::atomic::{AtomicBool, Ordering}};
 
 use futures::lock::Mutex;
 
@@ -153,12 +147,12 @@ impl<T: PartialEq> PartialEq for OnceCell<T> {
 impl<T: Eq> Eq for OnceCell<T> {}
 
 /// Lazy cell which is only instantiated upon first retreival of contained value
-pub struct Lazy<T, F> {
+pub struct Lazy<T, F = Pin<Box<dyn Future<Output=T> + Send>>> {
     cell: OnceCell<T>,
     f: Mutex<Option<F>>,
 }
 
-impl<T, F> Lazy<T, F> {
+impl<T> Lazy<T, Pin<Box<dyn Future<Output = T> + Send>>> {
     /// Creates a new Lazy with the given instantiator.
     ///
     /// # Example
@@ -172,15 +166,15 @@ impl<T, F> Lazy<T, F> {
     /// assert_eq!(lazy.get().await, &0);
     /// # })
     /// ```
-    pub fn new(f: F) -> Self {
+    pub fn new(f: impl Future<Output = T> + 'static + Send) -> Self {
         Self {
             cell: OnceCell::new(),
-            f: Mutex::new(Some(f)),
+            f: Mutex::new(Some(Box::pin(f))),
         }
     }
 }
 
-impl<T, F: Future<Output = T>> Lazy<T, F> {
+impl<T> Lazy<T, Pin<Box<dyn Future<Output = T> + Send>>> {
     /// Retreives the contents of the Lazy. If not instantiated, the instantiator block will be executed first.
     pub async fn get(&self) -> &T {
         self.cell
@@ -233,14 +227,30 @@ mod test {
 
     #[tokio::test]
     async fn test_lazy_multi_threaded() {
-        let lazy = Arc::new(Lazy::new(async { 0 }));
+        let t = 5;
+        let lazy = Arc::new(Lazy::new(async move { t }));
         let lazy_clone = lazy.clone();
 
         let handle = tokio::spawn(async move {
-            assert_eq!(lazy_clone.get().await, &0);
+            assert_eq!(lazy_clone.get().await, &t);
         });
 
         assert!(handle.await.is_ok());
-        assert_eq!(lazy.get().await, &0);
+        assert_eq!(lazy.get().await, &t);
+    }
+
+    #[tokio::test]
+    async fn test_lazy_struct() {
+        struct Test {
+            lazy: Lazy<i32>
+        }
+
+        let data = Test {
+            lazy: Lazy::new(async {
+                0
+            })
+        };
+
+        assert_eq!(data.lazy.get().await, &0);
     }
 }
