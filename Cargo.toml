@@ -2,7 +2,7 @@
 name = "async-oncecell"
 description = "Asynchronous versions of OnceCell and Lazy"
 repository = "https://github.com/Yoeori/async-oncecell"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Yoeri Otten <yoeri@otten.dev>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
